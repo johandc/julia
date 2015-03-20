@@ -1629,19 +1629,19 @@ static int push_root(jl_value_t *v, int d, int bits)
         // for stores to stack slots
         refyoung = GC_MARKED_NOESC;
     }
-    else if(vt == (jl_value_t*)jl_symbol_type) {
+    else if (vt == (jl_value_t*)jl_symbol_type) {
         //gc_setmark_other(v, GC_MARKED); // symbols have their own allocator and are never freed
     }
-    else if(
+    else if (
 #ifdef GC_VERIFY
-            // this check should not be needed but it helps catching corruptions early
-            gc_typeof(vt) == (jl_value_t*)jl_datatype_type
+             // this check should not be needed but it helps catching corruptions early
+             gc_typeof(vt) == (jl_value_t*)jl_datatype_type
 #else
-            1
+             1
 #endif
-            ) {
+             ) {
         jl_datatype_t *dt = (jl_datatype_t*)vt;
-        MARK(v, bits = gc_setmark(v, jl_datatype_size(dt), GC_MARKED_NOESC));
+        MARK(v, bits = gc_setmark(v, jl_struct_value_size(v), GC_MARKED_NOESC));
         int nf = (int)jl_tuple_len(dt->names);
         // TODO check if there is a perf improvement for objects with a lot of fields
         // int fdsz = sizeof(void*)*nf;

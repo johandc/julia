@@ -569,6 +569,17 @@ STATIC_INLINE jl_value_t *jl_cellset(void *a, size_t i, void *x)
 #define jl_field_size(st,i)   (((jl_datatype_t*)st)->fields[i].size)
 #define jl_datatype_size(t)   (((jl_datatype_t*)t)->size)
 
+STATIC_INLINE size_t jl_struct_value_size(jl_value_t *v)
+{
+    jl_datatype_t *dt = (jl_datatype_t*)jl_typeof(v);
+    if (dt == jl_datatype_type) {
+        return NWORDS(sizeof(jl_datatype_t) + jl_tuple_len(((jl_datatype_t*)v)->names)*sizeof(jl_fielddesc_t))*sizeof(void*);
+    }
+    else {
+        return jl_datatype_size(dt);
+    }
+}
+
 // basic predicates -----------------------------------------------------------
 #define jl_is_null(v)        (((jl_value_t*)(v)) == ((jl_value_t*)jl_null))
 #define jl_is_nothing(v)     (((jl_value_t*)(v)) == ((jl_value_t*)jl_nothing))
